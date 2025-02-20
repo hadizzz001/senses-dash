@@ -22,7 +22,7 @@ const Upload = ({ onImagesUpload }) => {
       formData.append("upload_preset", "ml_default");
 
       try {
-        const res = await fetch("https://api.cloudinary.com/v1_1/drupytlml/image/upload", {
+        const res = await fetch("https://api.cloudinary.com/v1_1/dxlfxsimy/image/upload", {
           method: "POST",
           body: formData,
         });

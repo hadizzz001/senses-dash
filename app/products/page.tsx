@@ -14,9 +14,7 @@ export default function AddProduct() {
   const [price, setPrice] = useState(''); 
   const [img, setImg] = useState(['']); 
   const [categoryOptions, setCategoryOptions] = useState([]);  
-  const [selectedCategory, setSelectedCategory] = useState('');   
-  const [brandOptions, setBrandOptions] = useState([]);  
-  const [selectedBrand, setSelectedBrand] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('');  
   const [isNewArrival, setIsNewArrival] = useState(false); // New Arrival State
 
   // Fetch categories based on selected type
@@ -38,22 +36,7 @@ export default function AddProduct() {
     fetchCategories();
   }, []);
 
-  useEffect(() => {
-    async function fetchBrands() {
-      try {
-        const response = await fetch(`/api/brand`);
-        if (response.ok) {
-          const data = await response.json();
-          setBrandOptions(data);  
-        } else {
-          console.error('Failed to fetch brands');
-        }
-      } catch (error) {
-        console.error('Error fetching brands:', error);
-      }
-    }
-    fetchBrands();
-  }, []);
+ 
 
  
 
@@ -67,8 +50,7 @@ export default function AddProduct() {
 
     const payload = {
       title, 
-      description,
-      brand: selectedBrand, 
+      description, 
       price, 
       img, 
       category: selectedCategory,
@@ -107,21 +89,7 @@ export default function AddProduct() {
         required
       /> 
 
-      {/* Brand Dropdown */}
-      <label className="block text-lg font-bold mb-2">Brand</label>
-      <select
-        value={selectedBrand}
-        onChange={(e) => setSelectedBrand(e.target.value)}
-        className="w-full border p-2 mb-4"
-        required
-      >
-        <option value="" disabled>Select a Brand</option>
-        {brandOptions.map((category) => (
-          <option key={category.id} value={category.name}>
-            {category.name}
-          </option>
-        ))}
-      </select>
+ 
 
       <label className="block text-lg font-bold mb-2">Category</label>
       <select

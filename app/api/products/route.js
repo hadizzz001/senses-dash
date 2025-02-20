@@ -9,8 +9,7 @@ export async function POST(req) {
       description,
       price,
       img,
-      category,
-      brand,
+      category, 
       arrival
       } = body;
 
@@ -24,8 +23,7 @@ console.log("body are: ",body);
         description,
         price,
         img,
-        category,
-        brand,        
+        category,   
         arrival
           
       },

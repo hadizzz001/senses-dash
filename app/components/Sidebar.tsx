@@ -43,32 +43,12 @@ export default function Sidebar() {
               <a href="/category" style={{ color: "white", textDecoration: "none" }}>
                 Add Category
               </a>
-            </li>
-            {/* <li>
-              <a href="/sub" style={{ color: "white", textDecoration: "none" }}>
-                Add Subcategory
-              </a>
-            </li> */}
-            <li>
-              <a href="/brand" style={{ color: "white", textDecoration: "none" }}>
-                Add Brand
-              </a>
-            </li>
+            </li>  
             <li>
               <a href="/reservation" style={{ color: "white", textDecoration: "none" }}>
                 Orders
               </a>
-            </li>
-            <li>
-              <a href="/social" style={{ color: "white", textDecoration: "none" }}>
-                Social Media
-              </a>
-            </li>
-            {/* <li>
-              <a href="/hot" style={{ color: "white", textDecoration: "none" }}>
-                Hot sale header
-              </a>
-            </li> */}
+            </li> 
             <li>
               <a href="/" style={{ color: "white", textDecoration: "none" }}>
                 Logout
