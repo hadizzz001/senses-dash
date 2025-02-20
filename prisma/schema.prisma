@@ -13,10 +13,8 @@ model Product {
   description String
   price       String
   img         String[]
-  category    String 
-  brand       String
-  arrival     String @default("no")
-  createdAt   DateTime @default(now())
+  category    String  
+  arrival     String @default("no") 
 }
 
 model Category {
@@ -25,17 +23,8 @@ model Category {
   img  String[]
 }
 
-model Subcategory {
-  id       String @id @default(auto()) @map("_id") @db.ObjectId
-  name     String @unique
-  category String
-}
-
-model Brand {
-  id   String   @id @default(auto()) @map("_id") @db.ObjectId
-  name String   @unique
-  img  String[]
-}
+ 
+ 
 
 model Order {
   id        String @id @default(auto()) @map("_id") @db.ObjectId
@@ -43,13 +32,4 @@ model Order {
   cartItems Json
 }
 
-model Social {
-  id   String @id @default(auto()) @map("_id") @db.ObjectId
-  name String
-  link String
-}
-
-model title {
-  id    String @id @default(auto()) @map("_id") @db.ObjectId
-  title String
-}
+ 
