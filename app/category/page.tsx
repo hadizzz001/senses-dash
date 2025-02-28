@@ -30,6 +30,8 @@ const ManageCategory = () => {
   useEffect(() => {
     fetchCategories();
   }, []);
+ 
+  
 
   // Add category
   const handleSubmit = async (e) => {
@@ -40,6 +42,8 @@ const ManageCategory = () => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(formData),
     });
+ 
+    
 
     if (res.ok) {
       setMessage('category added successfully!');
@@ -147,7 +151,7 @@ const ManageCategory = () => {
           />
         </div>
        
-        <Upload onImagesUpload={handleImgChange} />
+        <Upload onFilesUpload={handleImgChange} />
         <button type="submit" className="bg-blue-500 text-white px-4 py-2">
           {editMode ? 'Update Category' : 'Add category'}
         </button>
@@ -156,44 +160,58 @@ const ManageCategory = () => {
 
       <h2 className="text-xl font-bold mt-8">All Categories</h2>
       <table className="table-auto border-collapse border border-gray-300 w-full mt-4">
-        <thead>
-          <tr>
-            <th className="border border-gray-300 p-2">Name</th>
-            <th className="border border-gray-300 p-2">Image</th>
-            <th className="border border-gray-300 p-2">Actions</th>
+  <thead>
+    <tr>
+      <th className="border border-gray-300 p-2">Name</th>
+      <th className="border border-gray-300 p-2">Image</th>
+      <th className="border border-gray-300 p-2">Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    {categories.length > 0 ? (
+      categories.map((category) => {
+        const fileUrl = category.img[0];
+        const isVideo = /\.(mp4|webm|ogg)$/i.test(fileUrl);
+        return (
+          <tr key={category.id}>
+            <td className="border border-gray-300 p-2">{category.name}</td>
+            <td className="border border-gray-300 p-2">
+              {isVideo ? (
+                <video controls className="w-24 h-auto">
+                  <source src={fileUrl} type="video/mp4" />
+                  Your browser does not support the video tag.
+                </video>
+              ) : (
+                <img src={fileUrl} alt="Product Image" className="w-24 h-auto" />
+              )}
+            </td>
+            <td className="border border-gray-300 p-2 text-center">
+              <button
+                onClick={() => handleEdit(category)}
+                className="bg-yellow-500 text-white px-4 py-1 rounded mr-2"
+              >
+                Edit
+              </button>
+              <button
+                onClick={() => handleDelete(category.id)}
+                className="bg-red-500 text-white px-4 py-1 rounded"
+              >
+                Delete
+              </button>
+            </td>
           </tr>
-        </thead>
-        <tbody>
-          {categories.length > 0 ? (
-            categories.map((category) => (
-              <tr key={category.id}>
-                <td className="border border-gray-300 p-2">{category.name}</td>
-                <td className="border border-gray-300 p-2"><img src={`${category.img[0]}`}  alt="Product Image" className="w-24 h-auto" /></td>
-                <td className="border border-gray-300 p-2 text-center">
-                  <button
-                    onClick={() => handleEdit(category)}
-                    className="bg-yellow-500 text-white px-4 py-1 rounded mr-2"
-                  >
-                    Edit
-                  </button>
-                  <button
-                    onClick={() => handleDelete(category.id)}
-                    className="bg-red-500 text-white px-4 py-1 rounded"
-                  >
-                    Delete
-                  </button>
-                </td>
-              </tr>
-            ))
-          ) : (
-            <tr>
-              <td  className="border border-gray-300 p-2 text-center">
-                No categorys found.
-              </td>
-            </tr>
-          )}
-        </tbody>
-      </table>
+        );
+      })
+    ) : (
+      <tr>
+        <td colSpan={3} className="border border-gray-300 p-2 text-center">
+          No categories found.
+        </td>
+      </tr>
+    )}
+  </tbody>
+</table>
+
       <style
           dangerouslySetInnerHTML={{
             __html:

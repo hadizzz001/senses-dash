@@ -2,27 +2,31 @@
 
 import { useState } from "react";
 
-const Upload = ({ onImagesUpload }) => {
-  const [images, setImages] = useState([]); // Array of uploaded image URLs
+const Upload = ({ onFilesUpload }) => {
+  const [media, setMedia] = useState([]); // Array of uploaded file URLs
   const [loading, setLoading] = useState(false);
 
-  const handleImagesChange = async (event) => {
+  const handleFilesChange = async (event) => {
     const files = event.target.files;
     if (!files || files.length === 0) return;
 
     setLoading(true);
-    const uploadedImages = [];
+    const uploadedMedia = [];
 
-    // Iterate over selected files and upload each one
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
       const formData = new FormData();
       formData.append("file", file);
-      // Replace with your actual upload preset name from Cloudinary (and ensure it's set to unsigned)
       formData.append("upload_preset", "ml_default");
 
+      // Determine the upload endpoint based on file type
+      const isVideo = file.type.startsWith("video/");
+      const uploadUrl = isVideo
+        ? "https://api.cloudinary.com/v1_1/dxlfxsimy/video/upload"
+        : "https://api.cloudinary.com/v1_1/dxlfxsimy/image/upload";
+
       try {
-        const res = await fetch("https://api.cloudinary.com/v1_1/dxlfxsimy/image/upload", {
+        const res = await fetch(uploadUrl, {
           method: "POST",
           body: formData,
         });
@@ -33,27 +37,32 @@ const Upload = ({ onImagesUpload }) => {
         }
 
         const data = await res.json();
-        uploadedImages.push(data.secure_url);
+        uploadedMedia.push(data.secure_url);
       } catch (error) {
-        console.error("Error uploading image:", error);
+        console.error("Error uploading file:", error);
       }
     }
 
-    // Update state with new images
-    setImages((prevImages) => [...prevImages, ...uploadedImages]);
-    // Pass uploaded image URLs back to parent component
-    if (onImagesUpload) onImagesUpload(uploadedImages);
+    setMedia((prevMedia) => [...prevMedia, ...uploadedMedia]);
+    if (onFilesUpload) onFilesUpload(uploadedMedia);
     setLoading(false);
   };
 
   return (
     <div className="mb-4">
-      <label className="block mb-1 font-bold">Upload Images</label>
-      <input type="file" multiple onChange={handleImagesChange} className="border p-2 w-full" />
+      <label className="block mb-1 font-bold">Upload Images or Videos</label>
+      <input type="file" multiple accept="image/*,video/*" onChange={handleFilesChange} className="border p-2 w-full" />
       {loading && <p>Uploading...</p>}
       <div className="mt-2 flex flex-wrap gap-2">
-        {images.map((imgUrl, index) => (
-          <img key={index} src={imgUrl} alt={`Uploaded ${index}`} className="w-24 h-auto object-cover" />
+        {media.map((fileUrl, index) => (
+          fileUrl.match(/\.(mp4|webm|ogg)$/i) ? (
+            <video key={index} controls className="w-24 h-auto">
+              <source src={fileUrl} type="video/mp4" />
+              Your browser does not support the video tag.
+            </video>
+          ) : (
+            <img key={index} src={fileUrl} alt={`Uploaded ${index}`} className="w-24 h-auto object-cover" />
+          )
         ))}
       </div>
     </div>

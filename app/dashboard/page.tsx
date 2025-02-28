@@ -153,44 +153,56 @@ export default function ProductTable() {
       </div>
 
       <table className="table-auto w-full border-collapse border border-gray-200 mb-4">
-        <thead>
-          <tr className="bg-gray-100">
-            <th className="border p-2">Title</th>
-            <th className="border p-2">Pic</th>
-            <th className="border p-2">Price (USD)</th>  
-            <th className="border p-2">Category</th>
-            <th className="border p-2">New Arrival</th>
-            <th className="border p-2">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {filteredProducts.map((product) => (
-            <tr key={product.id} className="hover:bg-gray-50">
-              <td className="border p-2">{product.title}</td>
-              <td className="border p-2">
-                <img src={`${product.img[0]}`} alt="Product Image" className="w-24 h-auto" />
-              </td>
-              <td className="border p-2">{product.price}</td>  
-              <td className="border p-2">{product.category}</td>
-              <td className="border p-2">{product.arrival}</td>
-              <td className="border p-2">
-                <button
-                  onClick={() => handleEdit(product)}
-                  className="bg-yellow-500 text-white px-2 py-1 mr-2"
-                >
-                  Edit
-                </button>
-                <button
-                  onClick={() => handleDelete(product.id)}
-                  className="bg-red-500 text-white px-2 py-1"
-                >
-                  Delete
-                </button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+  <thead>
+    <tr className="bg-gray-100">
+      <th className="border p-2">Title</th>
+      <th className="border p-2">Pic</th>
+      <th className="border p-2">Price (USD)</th>
+      <th className="border p-2">Category</th>
+      <th className="border p-2">New Arrival</th>
+      <th className="border p-2">Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    {filteredProducts.map((product) => {
+      const fileUrl = product.img[0];
+      const isVideo = /\.(mp4|webm|ogg)$/i.test(fileUrl);
+      return (
+        <tr key={product.id} className="hover:bg-gray-50">
+          <td className="border p-2">{product.title}</td>
+          <td className="border p-2">
+            {isVideo ? (
+              <video controls className="w-24 h-auto">
+                <source src={fileUrl} type="video/mp4" />
+                Your browser does not support the video tag.
+              </video>
+            ) : (
+              <img src={fileUrl} alt="Product Image" className="w-24 h-auto" />
+            )}
+          </td>
+          <td className="border p-2">{product.price}</td>
+          <td className="border p-2">{product.category}</td>
+          <td className="border p-2">{product.arrival}</td>
+          <td className="border p-2">
+            <button
+              onClick={() => handleEdit(product)}
+              className="bg-yellow-500 text-white px-2 py-1 mr-2"
+            >
+              Edit
+            </button>
+            <button
+              onClick={() => handleDelete(product.id)}
+              className="bg-red-500 text-white px-2 py-1"
+            >
+              Delete
+            </button>
+          </td>
+        </tr>
+      );
+    })}
+  </tbody>
+</table>
+
     </div>
   );
 }
@@ -327,7 +339,7 @@ function EditProductForm({ product, onCancel, onSave }) {
         <label className="ml-2 text-sm font-medium">New Arrival</label>
       </div>
  
-      <Upload onImagesUpload={handleImgChange} /> 
+      <Upload onFilesUpload={handleImgChange} /> 
       {/* Buttons */}
       <div className="flex gap-2">
         <button type="submit" className="bg-green-500 text-white px-4 py-2">

@@ -127,7 +127,7 @@ export default function AddProduct() {
         placeholder="Write your product description here..."
       />
 
-      <Upload onImagesUpload={handleImgChange} /> 
+      <Upload onFilesUpload={handleImgChange} /> 
 
       {/* New Arrival Checkbox */}
       <div className="flex items-center my-4">
