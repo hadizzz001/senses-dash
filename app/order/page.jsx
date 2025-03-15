@@ -180,7 +180,7 @@ const page = () => {
                                         </div> 
                                         <div className="flex justify-between mb-2">
                                             <span className="font-semibold">Total Amount</span>
-                                            <span className="font-semibold">${(finalTotal.totalPrice)+3}</span>
+                                            <span className="font-semibold">${allTemp1.total}</span>
                                         </div> 
                                     </>
                                 ) : (

@@ -1,5 +1,4 @@
-"use client"
-
+"use client";
 
 import { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
@@ -9,15 +8,19 @@ import Upload from '../components/Upload';
 const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
 
 export default function AddProduct() {
-  const [title, setTitle] = useState(''); 
-  const [description, setDescription] = useState('');  
-  const [price, setPrice] = useState(''); 
-  const [img, setImg] = useState(['']); 
-  const [categoryOptions, setCategoryOptions] = useState([]);  
-  const [selectedCategory, setSelectedCategory] = useState('');  
-  const [isNewArrival, setIsNewArrival] = useState(false); // New Arrival State
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+  const [price, setPrice] = useState('');
+  const [discount, setdiscount] = useState('');
+  const [stock, setStock] = useState('');
+  const [img, setImg] = useState(['']);
+  const [categoryOptions, setCategoryOptions] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState('');
+  const [subCategoryOptions, setSubCategoryOptions] = useState([]);
+  const [selectedSubCategory, setSelectedSubCategory] = useState('');
+  const [isNewArrival, setIsNewArrival] = useState(false);
 
-  // Fetch categories based on selected type
+  // Fetch categories
   useEffect(() => {
     async function fetchCategories() {
       try {
@@ -36,12 +39,35 @@ export default function AddProduct() {
     fetchCategories();
   }, []);
 
- 
+  // Fetch subcategories based on selected category
+// Fetch subcategories based on selected category
+useEffect(() => {
+  if (!selectedCategory) {
+    setSubCategoryOptions([]); // Reset subcategories when category is cleared
+    return;
+  }
 
- 
+  async function fetchSubCategories() {
+    try {
+      const response = await fetch(`/api/subcategory/${selectedCategory}`);
+      if (response.ok) {
+        const data = await response.json();
+        setSubCategoryOptions(data);
+        setSelectedSubCategory('');
+      } else {
+        console.error('Failed to fetch subcategories');
+      }
+    } catch (error) {
+      console.error('Error fetching subcategories:', error);
+    }
+  }
+  
+  fetchSubCategories();
+}, [selectedCategory]);
+
 
   const handleSubmit = async (e) => {
-    e.preventDefault(); 
+    e.preventDefault();
 
     if (img.length === 1 && img[0] === '') {
       alert('Please choose at least 1 image');
@@ -49,12 +75,15 @@ export default function AddProduct() {
     }
 
     const payload = {
-      title, 
-      description, 
-      price, 
-      img, 
+      title,
+      description,
+      price,
+      discount,
+      stock,
+      img,
       category: selectedCategory,
-      ...(isNewArrival && { arrival: "yes" }) // Add arrival only if checked
+      subcategory: selectedSubCategory,
+      ...(isNewArrival && { arrival: "yes" })
     };
 
     const response = await fetch('/api/products', {
@@ -87,10 +116,9 @@ export default function AddProduct() {
         onChange={(e) => setTitle(e.target.value)}
         className="w-full border p-2 mb-4"
         required
-      /> 
+      />
 
- 
-
+      {/* Category Selection */}
       <label className="block text-lg font-bold mb-2">Category</label>
       <select
         value={selectedCategory}
@@ -106,7 +134,25 @@ export default function AddProduct() {
         ))}
       </select>
 
- 
+      {/* Subcategory Selection */}
+      {subCategoryOptions.length > 0 && (
+        <>
+          <label className="block text-lg font-bold mb-2">Subcategory</label>
+          <select
+            value={selectedSubCategory}
+            onChange={(e) => setSelectedSubCategory(e.target.value)}
+            className="w-full border p-2 mb-4"
+            required
+          >
+            <option value="" disabled>Select a subcategory</option>
+            {subCategoryOptions.map((sub) => (
+              <option key={sub.id} value={sub.name}>
+                {sub.name}
+              </option>
+            ))}
+          </select>
+        </>
+      )}
 
       <input
         type="number"
@@ -116,7 +162,25 @@ export default function AddProduct() {
         onChange={(e) => setPrice(e.target.value)}
         className="w-full border p-2 mb-4"
         required
-      /> 
+      />
+
+      <input
+        type="number"
+        step="0.01"
+        placeholder="Discounted Price"
+        value={discount}
+        onChange={(e) => setdiscount(e.target.value)}
+        className="w-full border p-2 mb-4"
+      />
+
+      <input
+        type="number"
+        placeholder="Stock"
+        value={stock}
+        onChange={(e) => setStock(e.target.value)}
+        className="w-full border p-2 mb-4"
+        required
+      />
 
       <label className="block text-lg font-bold mb-2">Description</label>
       <ReactQuill
@@ -127,7 +191,7 @@ export default function AddProduct() {
         placeholder="Write your product description here..."
       />
 
-      <Upload onFilesUpload={handleImgChange} /> 
+      <Upload onFilesUpload={handleImgChange} />
 
       {/* New Arrival Checkbox */}
       <div className="flex items-center my-4">

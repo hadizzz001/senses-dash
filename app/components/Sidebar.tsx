@@ -45,6 +45,16 @@ export default function Sidebar() {
               </a>
             </li>  
             <li>
+              <a href="/sub" style={{ color: "white", textDecoration: "none" }}>
+                Add Subcategory
+              </a>
+            </li>  
+            <li>
+              <a href="/offer" style={{ color: "white", textDecoration: "none" }}>
+                Change Headline
+              </a>
+            </li>  
+            <li>
               <a href="/reservation" style={{ color: "white", textDecoration: "none" }}>
                 Orders
               </a>

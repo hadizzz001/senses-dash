@@ -158,7 +158,10 @@ export default function ProductTable() {
       <th className="border p-2">Title</th>
       <th className="border p-2">Pic</th>
       <th className="border p-2">Price (USD)</th>
+      <th className="border p-2">Discount Price (USD)</th>
+      <th className="border p-2">Stock</th>
       <th className="border p-2">Category</th>
+      <th className="border p-2">Subcategory</th>
       <th className="border p-2">New Arrival</th>
       <th className="border p-2">Actions</th>
     </tr>
@@ -168,40 +171,48 @@ export default function ProductTable() {
       const fileUrl = product.img[0];
       const isVideo = /\.(mp4|webm|ogg)$/i.test(fileUrl);
       return (
-        <tr key={product.id} className="hover:bg-gray-50">
-          <td className="border p-2">{product.title}</td>
-          <td className="border p-2">
-            {isVideo ? (
-              <video controls className="w-24 h-auto">
-                <source src={fileUrl} type="video/mp4" />
-                Your browser does not support the video tag.
-              </video>
-            ) : (
-              <img src={fileUrl} alt="Product Image" className="w-24 h-auto" />
-            )}
-          </td>
-          <td className="border p-2">{product.price}</td>
-          <td className="border p-2">{product.category}</td>
-          <td className="border p-2">{product.arrival}</td>
-          <td className="border p-2">
-            <button
-              onClick={() => handleEdit(product)}
-              className="bg-yellow-500 text-white px-2 py-1 mr-2"
-            >
-              Edit
-            </button>
-            <button
-              onClick={() => handleDelete(product.id)}
-              className="bg-red-500 text-white px-2 py-1"
-            >
-              Delete
-            </button>
-          </td>
-        </tr>
+<tr
+  key={product.id}
+  className={` ${product.stock === "0" ? 'bg-red-500' : ''}`}
+>
+  <td className="border p-2">{product.title}</td>
+  <td className="border p-2">
+    {isVideo ? (
+      <video controls className="w-24 h-auto">
+        <source src={fileUrl} type="video/mp4" />
+        Your browser does not support the video tag.
+      </video>
+    ) : (
+      <img src={fileUrl} alt="Product Image" className="w-24 h-auto" />
+    )}
+  </td>
+  <td className="border p-2">{product.price}</td>
+  <td className="border p-2">{product.discount || "N/A"}</td>
+  <td className="border p-2">{product.stock}</td>
+  <td className="border p-2">{product.category}</td>
+  <td className="border p-2">{product.subcategory || "N/A"}</td>
+  <td className="border p-2">{product.arrival}</td>
+  <td className="border p-2">
+    <button
+      onClick={() => handleEdit(product)}
+      className="bg-yellow-500 text-white px-2 py-1 mr-2"
+    >
+      Edit
+    </button>
+    <button
+      onClick={() => handleDelete(product.id)}
+      className="bg-red-500 text-white px-2 py-1"
+    >
+      Delete
+    </button>
+  </td>
+</tr>
+
       );
     })}
   </tbody>
 </table>
+
 
     </div>
   );
@@ -210,21 +221,26 @@ export default function ProductTable() {
 function EditProductForm({ product, onCancel, onSave }) {
   const [title, setTitle] = useState(product.title);
   const [price, setPrice] = useState(product.price);
+  const [stock, setStock] = useState(product.stock || 0); 
+  const [discount, setDiscount] = useState(product.discount || 0); 
   const [img, setImg] = useState(product.img || []);
   const [description, setDescription] = useState(product.description); 
   const [categories, setCategories] = useState([]); 
+  const [subcategories, setSubcategories] = useState([]); 
   const [selectedCategory, setSelectedCategory] = useState(product.category || ""); 
-  const [isEditingCategory, setIsEditingCategory] = useState(false); 
+  const [selectedSubcategory, setSelectedSubcategory] = useState(product.subcategory || ""); 
   const [arrival, setArrival] = useState(product.arrival === 'yes');
- 
+
   useEffect(() => {
     const fetchOptions = async () => {
       try {
-        const [categoriesRes] = await Promise.all([
+        const [categoriesRes, subcategoriesRes] = await Promise.all([
           fetch("/api/category"), 
+          fetch("/api/subcategory"), 
         ]);
 
         setCategories(await categoriesRes.json()); 
+        setSubcategories(await subcategoriesRes.json()); 
       } catch (error) {
         console.error("Error fetching options:", error);
       }
@@ -235,124 +251,81 @@ function EditProductForm({ product, onCancel, onSave }) {
 
   const handleSubmit = (e) => { 
     e.preventDefault();
- 
+
     onSave({
       ...product,
       title,
       description,
       img,
       price,
+      stock,
+      discount,
       category: selectedCategory, 
+      subcategory: selectedSubcategory,
       arrival: arrival ? 'yes' : 'no',
     });
   };
 
-  const handleImgChange = (url) => {
-    if (url) {
-      setImg(url);
-    }
-  };
-  
- 
-
   return (
     <form onSubmit={handleSubmit} className="border p-4 bg-gray-100 rounded">
       <h2 className="text-xl font-bold mb-4">Edit Product</h2>
- 
+
       <div className="mb-4">
-        <label htmlFor="title" className="block text-sm font-medium text-gray-700">
-          Title
-        </label>
-        <input
-          id="title"
-          type="text"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          className="w-full border p-2"
-          placeholder="Title"
-          required
-        />
+        <label className="block text-sm font-medium text-gray-700">Title</label>
+        <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} className="w-full border p-2" required />
       </div>
 
-      
       <div className="mb-4">
-        <label htmlFor="category" className="block text-sm font-medium text-gray-700">
-          Category
-        </label>
-        {isEditingCategory ? (
-          <select
-            id="category"
-            value={selectedCategory}
-            onChange={(e) => setSelectedCategory(e.target.value)}
-            onBlur={() => setIsEditingCategory(false)}
-            className="w-full border p-2"
-          >
-            <option value="">Select Category</option>
-            {categories.map((cat) => (
-              <option key={cat.id} value={cat.name}>
-                {cat.name}
-              </option>
-            ))}
-          </select>
-        ) : (
-          <input
-            type="text"
-            value={selectedCategory}
-            onClick={() => setIsEditingCategory(true)}
-            readOnly
-            className="w-full border p-2 cursor-pointer"
-          />
-        )}
+        <label className="block text-sm font-medium text-gray-700">Category</label>
+        <select value={selectedCategory} onChange={(e) => setSelectedCategory(e.target.value)} className="w-full border p-2">
+          <option value="">Select Category</option>
+          {categories.map((cat) => (
+            <option key={cat.id} value={cat.name}>{cat.name}</option>
+          ))}
+        </select>
       </div>
 
- 
- 
-        <label htmlFor="price" className="block text-sm font-medium text-gray-700">
-          Price
-        </label>
-        <input
-          id="price"
-          type="text"
-          value={price}
-          onChange={(e) => setPrice(e.target.value)}
-          className="w-full border p-2"
-          placeholder="Price"
-          required
-        />
-        
+      <div className="mb-4">
+        <label className="block text-sm font-medium text-gray-700">Subcategory</label>
+        <select value={selectedSubcategory} onChange={(e) => setSelectedSubcategory(e.target.value)} className="w-full border p-2">
+          <option value="">Select Subcategory</option>
+          {subcategories.map((sub) => (
+            <option key={sub.id} value={sub.name}>{sub.name}</option>
+          ))}
+        </select>
+      </div>
+
+      <div className="mb-4">
+        <label className="block text-sm font-medium text-gray-700">Price</label>
+        <input type="number" value={price} onChange={(e) => setPrice(e.target.value)} className="w-full border p-2" required />
+      </div>
+
+      <div className="mb-4">
+        <label className="block text-sm font-medium text-gray-700">Discounted price</label>
+        <input type="number" value={discount} onChange={(e) => setDiscount(e.target.value)} className="w-full border p-2" />
+      </div>
+
+      <div className="mb-4">
+        <label className="block text-sm font-medium text-gray-700">Stock</label>
+        <input type="number" value={stock} onChange={(e) => setStock(e.target.value)} className="w-full border p-2" required />
+      </div>
+
+
+
       <label className="block text-lg font-bold mb-2">Description</label>
-      <ReactQuill
-        value={description}
-        onChange={setDescription}
-        className="mb-4"
-        theme="snow"
-        placeholder="Write your product description here..."
-      />
+      <ReactQuill value={description} onChange={setDescription} className="mb-4" theme="snow" placeholder="Write your product description here..." />
 
-
-<div className="mb-4">
-        <input
-          type="checkbox"
-          checked={arrival}
-          onChange={(e) => setArrival(e.target.checked)}
-        />
+      <div className="mb-4">
+        <input type="checkbox" checked={arrival} onChange={(e) => setArrival(e.target.checked)} />
         <label className="ml-2 text-sm font-medium">New Arrival</label>
       </div>
- 
-      <Upload onFilesUpload={handleImgChange} /> 
-      {/* Buttons */}
+
+      <Upload onFilesUpload={(url) => setImg(url)} /> 
+
       <div className="flex gap-2">
-        <button type="submit" className="bg-green-500 text-white px-4 py-2">
-          Save
-        </button>
-        <button
-          type="button"
-          onClick={onCancel}
-          className="bg-gray-500 text-white px-4 py-2"
-        >
-          Cancel
-        </button>
+        <button type="submit" className="bg-green-500 text-white px-4 py-2">Save</button>
+        <button type="button" onClick={onCancel} className="bg-gray-500 text-white px-4 py-2">Cancel</button>
       </div>
     </form>
   );
-} 
+}
