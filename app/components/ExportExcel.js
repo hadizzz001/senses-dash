@@ -13,12 +13,16 @@ const ExportToExcel = ({ allTemp }) => {
       // Loop through products in userInfo
       order.userInfo.forEach((product) => {
         formattedData.push({
-          Order: orderIndex + 1, // Order Number
+          ReceiptNumber: order.num, // Order Number 
+          Code: order.code, // New field
+          Email: order.cartItems.email, // New field
+          Delivery$: order.delivery, // New field 
+          Paid: order.paid, // Paid status (true/false)
           Product: product.title,
-          Unit: product.discount,
+          UnitPrice$: product.discount,
           Quantity: product.quantity,
-          TotalAmount: order.total, // Total outside userInfo
-          Date: order.date, // Date outside userInfo
+          TotalAmount$: order.total, // Total outside userInfo
+          Date: order.date, // Date moved to the last column
         });
       });
     });

@@ -160,8 +160,7 @@ export default function ProductTable() {
       <th className="border p-2">Price (USD)</th>
       <th className="border p-2">Discount Price (USD)</th>
       <th className="border p-2">Stock</th>
-      <th className="border p-2">Category</th>
-      <th className="border p-2">Subcategory</th>
+      <th className="border p-2">Category</th> 
       <th className="border p-2">New Arrival</th>
       <th className="border p-2">Actions</th>
     </tr>
@@ -189,8 +188,7 @@ export default function ProductTable() {
   <td className="border p-2">{product.price}</td>
   <td className="border p-2">{product.discount || "N/A"}</td>
   <td className="border p-2">{product.stock}</td>
-  <td className="border p-2">{product.category}</td>
-  <td className="border p-2">{product.subcategory || "N/A"}</td>
+  <td className="border p-2">{product.category}</td> 
   <td className="border p-2">{product.arrival}</td>
   <td className="border p-2">
     <button
@@ -225,22 +223,18 @@ function EditProductForm({ product, onCancel, onSave }) {
   const [discount, setDiscount] = useState(product.discount || 0); 
   const [img, setImg] = useState(product.img || []);
   const [description, setDescription] = useState(product.description); 
-  const [categories, setCategories] = useState([]); 
-  const [subcategories, setSubcategories] = useState([]); 
-  const [selectedCategory, setSelectedCategory] = useState(product.category || ""); 
-  const [selectedSubcategory, setSelectedSubcategory] = useState(product.subcategory || ""); 
+  const [categories, setCategories] = useState([]);  
+  const [selectedCategory, setSelectedCategory] = useState(product.category || "");  
   const [arrival, setArrival] = useState(product.arrival === 'yes');
 
   useEffect(() => {
     const fetchOptions = async () => {
       try {
-        const [categoriesRes, subcategoriesRes] = await Promise.all([
-          fetch("/api/category"), 
-          fetch("/api/subcategory"), 
+        const [categoriesRes ] = await Promise.all([
+          fetch("/api/category"),  
         ]);
 
-        setCategories(await categoriesRes.json()); 
-        setSubcategories(await subcategoriesRes.json()); 
+        setCategories(await categoriesRes.json());  
       } catch (error) {
         console.error("Error fetching options:", error);
       }
@@ -260,8 +254,7 @@ function EditProductForm({ product, onCancel, onSave }) {
       price,
       stock,
       discount,
-      category: selectedCategory, 
-      subcategory: selectedSubcategory,
+      category: selectedCategory,  
       arrival: arrival ? 'yes' : 'no',
     });
   };
@@ -285,15 +278,7 @@ function EditProductForm({ product, onCancel, onSave }) {
         </select>
       </div>
 
-      <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700">Subcategory</label>
-        <select value={selectedSubcategory} onChange={(e) => setSelectedSubcategory(e.target.value)} className="w-full border p-2">
-          <option value="">Select Subcategory</option>
-          {subcategories.map((sub) => (
-            <option key={sub.id} value={sub.name}>{sub.name}</option>
-          ))}
-        </select>
-      </div>
+    
 
       <div className="mb-4">
         <label className="block text-sm font-medium text-gray-700">Price</label>

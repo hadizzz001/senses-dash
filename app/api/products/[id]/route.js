@@ -11,8 +11,7 @@ export async function PATCH(request, { params }) {
     price,
     discount,
     img,
-    category,
-    subcategory,
+    category, 
     stock,
     arrival 
      
@@ -31,8 +30,7 @@ export async function PATCH(request, { params }) {
         price,
         discount,
         img,
-        category,
-        subcategory,
+        category, 
         stock,
         arrival 
          

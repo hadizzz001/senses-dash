@@ -12,12 +12,11 @@ model Product {
   title       String
   description String
   price       String
-  discount       String
+  discount    String
   img         String[]
-  category    String  
-  subcategory    String  
-  stock    String  
-  arrival     String @default("no") 
+  category    String
+  stock       String
+  arrival     String   @default("no")
 }
 
 model Category {
@@ -26,36 +25,28 @@ model Category {
   img  String[]
 }
 
-model Subcategory {
-  id   String   @id @default(auto()) @map("_id") @db.ObjectId
-  name String   @unique
-  category String   
-  img  String[]
-}
-
-
 model Offer {
-  id   String   @id @default(auto()) @map("_id") @db.ObjectId
-  name String   @unique 
+  id   String @id @default(auto()) @map("_id") @db.ObjectId
+  code String
+  per  Int
 }
-
- 
- 
 
 model Order {
-  id        String @id @default(auto()) @map("_id") @db.ObjectId
+  id        String  @id @default(auto()) @map("_id") @db.ObjectId
   userInfo  Json
   cartItems Json
   total     String
-  date String
+  delivery  String
+  code      String?
+  paid      Boolean @default(false)
+  num       String?
+  remark    String?
+  date      String
 }
 
- 
-
-
-model Review{
-  id String @id @default(auto()) @map("_id") @db.ObjectId
-  name String
-  description String  
-  date DateTime @default(now()) @db.Date
+model Review {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  description String
+  date        DateTime @default(now()) @db.Date
 }

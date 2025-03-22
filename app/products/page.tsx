@@ -15,9 +15,7 @@ export default function AddProduct() {
   const [stock, setStock] = useState('');
   const [img, setImg] = useState(['']);
   const [categoryOptions, setCategoryOptions] = useState([]);
-  const [selectedCategory, setSelectedCategory] = useState('');
-  const [subCategoryOptions, setSubCategoryOptions] = useState([]);
-  const [selectedSubCategory, setSelectedSubCategory] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState(''); 
   const [isNewArrival, setIsNewArrival] = useState(false);
 
   // Fetch categories
@@ -39,31 +37,7 @@ export default function AddProduct() {
     fetchCategories();
   }, []);
 
-  // Fetch subcategories based on selected category
-// Fetch subcategories based on selected category
-useEffect(() => {
-  if (!selectedCategory) {
-    setSubCategoryOptions([]); // Reset subcategories when category is cleared
-    return;
-  }
-
-  async function fetchSubCategories() {
-    try {
-      const response = await fetch(`/api/subcategory/${selectedCategory}`);
-      if (response.ok) {
-        const data = await response.json();
-        setSubCategoryOptions(data);
-        setSelectedSubCategory('');
-      } else {
-        console.error('Failed to fetch subcategories');
-      }
-    } catch (error) {
-      console.error('Error fetching subcategories:', error);
-    }
-  }
-  
-  fetchSubCategories();
-}, [selectedCategory]);
+ 
 
 
   const handleSubmit = async (e) => {
@@ -81,8 +55,7 @@ useEffect(() => {
       discount,
       stock,
       img,
-      category: selectedCategory,
-      subcategory: selectedSubCategory,
+      category: selectedCategory, 
       ...(isNewArrival && { arrival: "yes" })
     };
 
@@ -134,25 +107,7 @@ useEffect(() => {
         ))}
       </select>
 
-      {/* Subcategory Selection */}
-      {subCategoryOptions.length > 0 && (
-        <>
-          <label className="block text-lg font-bold mb-2">Subcategory</label>
-          <select
-            value={selectedSubCategory}
-            onChange={(e) => setSelectedSubCategory(e.target.value)}
-            className="w-full border p-2 mb-4"
-            required
-          >
-            <option value="" disabled>Select a subcategory</option>
-            {subCategoryOptions.map((sub) => (
-              <option key={sub.id} value={sub.name}>
-                {sub.name}
-              </option>
-            ))}
-          </select>
-        </>
-      )}
+ 
 
       <input
         type="number"
