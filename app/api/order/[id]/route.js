@@ -68,7 +68,7 @@ export async function DELETE(request, { params }) {
       for (const item of order.userInfo) {
         const encodedTitle = encodeURIComponent(item.title); // ✅ Fix spaces issue
 
-        await fetch(`https://senses1.netlify.app/api/products1/${encodedTitle}`, {
+        await fetch(`https://senses-dash.netlify.app/api/products1/${encodedTitle}`, {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ quantity: item.quantity }),
